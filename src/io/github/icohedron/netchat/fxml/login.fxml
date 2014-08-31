@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="io.github.icohedron.netchat.LoginController">
+   <children>
+      <Button fx:id="loginButton" layoutX="138.0" layoutY="350.0" mnemonicParsing="false" onAction="#login" prefHeight="40.0" prefWidth="224.0" text="Login" AnchorPane.leftAnchor="138.0" AnchorPane.rightAnchor="138.0" />
+      <TextField fx:id="nameField" alignment="CENTER" layoutX="138.0" layoutY="125.0" onAction="#login" prefHeight="40.0" prefWidth="224.0" promptText="Name (e.g. Jake)" AnchorPane.leftAnchor="138.0" AnchorPane.rightAnchor="138.0" />
+      <TextField fx:id="IPField" alignment="CENTER" layoutX="138.0" layoutY="200.0" onAction="#login" prefHeight="40.0" prefWidth="224.0" promptText="IP Address (e.g. 127.0.0.1)" AnchorPane.leftAnchor="138.0" AnchorPane.rightAnchor="138.0" />
+      <TextField fx:id="portField" alignment="CENTER" layoutX="138.0" layoutY="275.0" onAction="#login" prefHeight="40.0" prefWidth="224.0" promptText="Port (e.g. 34755)" AnchorPane.leftAnchor="138.0" AnchorPane.rightAnchor="138.0" />
+      <Label layoutX="87.0" layoutY="21.0" prefHeight="100.0" prefWidth="350.0" text="Icohedron's NetChat" AnchorPane.leftAnchor="87.0" AnchorPane.rightAnchor="63.0">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <ImageView fx:id="image" fitHeight="161.0" fitWidth="173.5" layoutX="163.0" layoutY="415.0" onMouseClicked="#showSite" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@icosahedron.png" />
+         </image></ImageView>
+   </children>
+</AnchorPane>
