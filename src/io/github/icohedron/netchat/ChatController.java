@@ -90,13 +90,13 @@ public class ChatController {
 	}
 	
 	@FXML
-	private synchronized void sendMessage() {
+	private void sendMessage() {
 		String message = "/m/" + user + ": " + messageField.getText() + "/e/";
 		send(message.getBytes());
 		messageField.clear();
 	}
 	
-	private synchronized void send(final byte[] data) {
+	private void send(final byte[] data) {
 		send = new Thread(() -> {
 			DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 			try {
@@ -107,7 +107,7 @@ public class ChatController {
 		executor.execute(send);
 	}
 	
-	private synchronized void receive() {
+	private void receive() {
 		receive = new Thread(() -> {
 			while (running) {
 				byte[] data = new byte[1024];
@@ -124,7 +124,7 @@ public class ChatController {
 		executor.execute(receive);
 	}
 	
-	private synchronized void process(DatagramPacket packet) {
+	private void process(DatagramPacket packet) {
 		String message = new String(packet.getData());
 		Platform.runLater(() -> {
 			if (message.startsWith("/c/")) {

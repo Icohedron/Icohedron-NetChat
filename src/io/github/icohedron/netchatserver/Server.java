@@ -55,9 +55,11 @@ public class Server implements Runnable {
 			} else if (command.equalsIgnoreCase("/help")) {
 				printHelp();
 			} else if (command.equalsIgnoreCase("/clients")) {
-				System.out.println("Number of clients connected: " + clients.size());
-				for (String key : clients.keySet()) {
-					System.out.println(clients.get(key).name);
+				synchronized (this) {
+					System.out.println("Number of clients connected: " + clients.size());
+					for (String key : clients.keySet()) {
+						System.out.println(clients.get(key).name);
+					}
 				}
 			}
 		}
@@ -91,7 +93,7 @@ public class Server implements Runnable {
 		executor.execute(manage);
 	}
 	
-	private void sendClientList() {
+	private synchronized void sendClientList() {
 		if (clients.size() <= 0) return;
 		String users = "/u/";
 		for (String key : clients.keySet()) {
@@ -101,7 +103,7 @@ public class Server implements Runnable {
 		sendToAll(users);
 	}
 	
-	private void sendToAll(String message) {
+	private synchronized void sendToAll(String message) {
 		for (String key : clients.keySet()) {
 			ServerClient sc = clients.get(key);
 			send(message.getBytes(), sc.address, sc.port);
@@ -140,10 +142,12 @@ public class Server implements Runnable {
 	private void process(DatagramPacket packet) {
 		String string = new String(packet.getData());
 		if (string.startsWith("/c/")) {
-			String uuid = UUID.randomUUID().toString();
-			clients.put(uuid, new ServerClient(string.split("/c/|/e/")[1], packet.getAddress(), packet.getPort(), uuid));
-			send(("/c/" + uuid + "/e/").getBytes(), packet.getAddress(), packet.getPort());
-			System.out.println("New client: " + string.split("/c/|/e/")[1]);
+			synchronized (this) {
+				String uuid = UUID.randomUUID().toString();
+				clients.put(uuid, new ServerClient(string.split("/c/|/e/")[1], packet.getAddress(), packet.getPort(), uuid));
+				send(("/c/" + uuid + "/e/").getBytes(), packet.getAddress(), packet.getPort());
+				System.out.println("New client: " + string.split("/c/|/e/")[1]);
+			}
 		} else if (string.startsWith("/m/")){
 			sendToAll(string);
 			System.out.println(string.split("/m/|/e/")[1]);
@@ -155,7 +159,7 @@ public class Server implements Runnable {
 		}
 	}
 	
-	private void disconnect(String id, boolean status) {
+	private synchronized void disconnect(String id, boolean status) {
 		String user = null;
 		try {
 			user = clients.get(id).name;
