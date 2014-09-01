@@ -3,11 +3,8 @@ package io.github.icohedron.netchat;
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,7 +46,7 @@ public class LoginController {
 	}
 	
 	@FXML
-	public void login(ActionEvent event) {
+	private void login(ActionEvent event) {
 		Stage nextStage = (Stage) ((Node)event.getSource()).getScene().getWindow();
 		FXMLLoader fxmlLoader = new FXMLLoader(LoginController.class.getResource("/io/github/icohedron/netchat/fxml/chat.fxml"));
 		
@@ -69,7 +66,7 @@ public class LoginController {
 		}
 		
 		String address = IPField.getText();
-		if (!isValidIP(address) && !address.equalsIgnoreCase("localhost")) {
+		if (!isValidIP(address) && !address.equals("localhost")) {
 			IPField.setText("INVALID IP");
 			shouldReturn = true;
 		}
@@ -92,7 +89,7 @@ public class LoginController {
 	}
 	
 	@FXML
-	public void showSite() {
+	private void showSite() {
 		Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
 		if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
 			try {

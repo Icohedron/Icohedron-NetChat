@@ -44,9 +44,10 @@ public class ChatController {
 	
 	public void setCloseOperation(Stage stage) {
 		stage.setOnCloseRequest((WindowEvent) -> {
-			send(("/d/" + user + "/e/").getBytes());
+			send(("/d/" + uuid + "/e/").getBytes());
 			running = false;
-			Executors.newFixedThreadPool(2).shutdown();
+			executor.shutdown();
+			socket.close();
 			Platform.exit();
 			System.exit(0);
 		});
@@ -61,7 +62,7 @@ public class ChatController {
 		running = true;
 		
 		textArea.appendText("Attempting to connect to " + address + ":" + port + " as user: " + user + "\n");
-		String connection = "/m/" + user + " has joined the chat room." + "/e/";
+		String connection = "/m/" + user + " has connected to the server" + "/e/";
 		
 		boolean connected = openConnection(address);
 		if (!connected) {
@@ -77,13 +78,6 @@ public class ChatController {
 		});
 	}
 	
-	@FXML
-	public synchronized void sendMessage() {
-		String message = "/m/" + user + ": " + messageField.getText() + "/e/";
-		send(message.getBytes());
-		messageField.clear();
-	}
-	
 	private boolean openConnection(String address) {
 		try {
 			socket = new DatagramSocket();
@@ -95,13 +89,19 @@ public class ChatController {
 		return true;
 	}
 	
+	@FXML
+	private synchronized void sendMessage() {
+		String message = "/m/" + user + ": " + messageField.getText() + "/e/";
+		send(message.getBytes());
+		messageField.clear();
+	}
+	
 	private synchronized void send(final byte[] data) {
 		send = new Thread(() -> {
 			DatagramPacket packet = new DatagramPacket(data, data.length, ip, port);
 			try {
 				socket.send(packet);
 			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}, "Send");
 		executor.execute(send);
@@ -116,7 +116,6 @@ public class ChatController {
 				try {
 					socket.receive(packet);
 				} catch (IOException e) {
-					e.printStackTrace();
 				}
 			
 				process(packet);
@@ -132,6 +131,14 @@ public class ChatController {
 				uuid = message.split("/c/|/e/")[1];
 				textArea.appendText("Connection established! \n");
 				textArea.appendText("Your UUID is " + uuid + "\n");
+			} else if (message.startsWith("/i/")) {
+				send(("/i/" + uuid + "/e/").getBytes());
+			} else if (message.startsWith("/u/")) {
+				String[] usersOnline = message.split("/u/|/n/|/e/");
+				serverList.clear();
+				for (int i = 1; i < usersOnline.length; i++) {
+					serverList.appendText(usersOnline[i] + "\n");
+				}
 			} else {
 				textArea.appendText(message.split("/m/|/e/")[1] + "\n");
 			}
